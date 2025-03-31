@@ -1,0 +1,42 @@
+version: '3.7'
+
+services:
+  auth-service:
+    build:
+      context: ./auth-service
+    ports:
+      - "8000:8000"
+    networks:
+      - backend
+    depends_on:
+      - db  # auth-service'in db servisine bağlı olduğunu belirtiyoruz
+
+  doctor-service:
+    build:
+      context: ./doctor-service
+    ports:
+      - "8001:8001"
+    networks:
+      - backend
+    depends_on:
+      - db  # doctor-service'in db servisine bağlı olduğunu belirtiyoruz
+
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydatabase
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  postgres_data:
